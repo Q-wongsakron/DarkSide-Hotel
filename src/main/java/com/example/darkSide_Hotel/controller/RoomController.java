@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 //@RequiredArgsConstructor
 @RestController
@@ -24,13 +25,14 @@ public class RoomController {
     }
 
     // create method add new room to database
+    @CrossOrigin
     @PostMapping("/add/new-room")
     public ResponseEntity<RoomResponse> addNewRoom(
             @RequestParam("photo")MultipartFile photo,
             @RequestParam("roomType")String roomType,
             @RequestParam("roomPrice")BigDecimal roomPrice) throws SQLException, IOException {
         Room savedRoom = roomService.addNewRoom(photo, roomType, roomPrice);
-        // conver room to roomResponse grape property from data base response
+        // cover room to roomResponse grape property from database response
         RoomResponse response = new RoomResponse(
                 savedRoom.getId(),
                 savedRoom.getRoomType(),
@@ -38,5 +40,10 @@ public class RoomController {
 
         // return response to our homepage
         return ResponseEntity.ok(response);
+    }
+    @CrossOrigin
+    @GetMapping("/room/types")
+    public List<String> getRoomTypes(){
+        return roomService.getAllRoomTypes();
     }
 }
