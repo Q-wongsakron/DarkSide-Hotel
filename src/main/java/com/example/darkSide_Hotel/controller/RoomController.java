@@ -57,7 +57,8 @@ public class RoomController {
     public List<String> getRoomTypes(){
         return roomService.getAllRoomTypes();
     }
-
+    @CrossOrigin
+    @GetMapping("/all-rooms")
     // get all room data and booking in each room
     public ResponseEntity<List<RoomResponse>> getAllRooms() throws SQLException {
         List<Room> rooms = roomService.getAllRooms();
@@ -76,14 +77,14 @@ public class RoomController {
 
     private RoomResponse getRoomResponse(Room room) {
         List<BookedRoom> bookings = getAllBookingsByRoomId(room.getId());
-        List<BookingResponse> bookingInfo = bookings
-                .stream()
-                .map(booking -> new BookingResponse(
-                booking.getBookingId(),
-                booking.getCheckInDate(),
-                booking.getCheckOutDate(),
-                booking.getBookingConfirmationCode()
-        )).toList();
+//        List<BookingResponse> bookingInfo = bookings
+//                .stream()
+//                .map(booking -> new BookingResponse(
+//                booking.getBookingId(),
+//                booking.getCheckInDate(),
+//                booking.getCheckOutDate(),
+//                booking.getBookingConfirmationCode()
+//        )).toList();
         byte[] photoBytes = null;
         Blob photoBlob = room.getPhoto();
         if (photoBlob != null){
@@ -93,7 +94,7 @@ public class RoomController {
                 throw new PhotoRetrievalException("Error retrieving photo");
             }
         }
-        return new RoomResponse(room.getId(), room.getRoomType(), room.getRoomPrice() , room.isBooked(),photoBytes, bookingInfo);
+        return new RoomResponse(room.getId(), room.getRoomType(), room.getRoomPrice() , room.isBooked(),photoBytes);
     }
 
     private List<BookedRoom> getAllBookingsByRoomId(Long roomId) {
